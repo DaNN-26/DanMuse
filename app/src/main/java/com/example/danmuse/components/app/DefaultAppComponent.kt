@@ -1,18 +1,25 @@
 package com.example.danmuse.components.app
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.DelicateDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.example.danmuse.components.app.AppComponent.Child
 import com.example.danmuse.components.app.home.DefaultHomeComponent
+import com.example.danmuse.components.app.songPlayer.DefaultSongPlayerComponent
+import com.example.danmuse.media.controller.SongController
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class DefaultAppComponent @Inject constructor(
-    private val componentContext: ComponentContext
+    private val componentContext: ComponentContext,
+    private val controller: SongController
 ) : AppComponent, ComponentContext by componentContext {
+
+    override val songState = controller.songState
 
     private val navigation = StackNavigation<Config>()
 
@@ -33,10 +40,19 @@ class DefaultAppComponent @Inject constructor(
             is Config.Home -> Child.Home(homeComponent(componentContext))
             is Config.Profile -> Child.Profile()
             is Config.Online -> Child.Online()
+            is Config.SongPlayer -> Child.SongPlayer(songPlayerComponent(componentContext))
         }
 
     private fun homeComponent(componentContext: ComponentContext) =
-        DefaultHomeComponent(componentContext)
+        DefaultHomeComponent(componentContext, controller)
+
+    private fun songPlayerComponent(componentContext: ComponentContext) =
+        DefaultSongPlayerComponent(componentContext, controller)
+
+    @OptIn(DelicateDecomposeApi::class)
+    override fun openPlayer() {
+        navigation.push(Config.SongPlayer)
+    }
 
     @Serializable
     sealed interface Config {
@@ -46,5 +62,7 @@ class DefaultAppComponent @Inject constructor(
         data object Profile : Config
         @Serializable
         data object Online : Config
+        @Serializable
+        data object SongPlayer : Config
     }
 }

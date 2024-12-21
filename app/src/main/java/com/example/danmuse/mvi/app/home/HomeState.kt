@@ -1,6 +1,6 @@
-package com.example.danmuse.mvi.home
+package com.example.danmuse.mvi.app.home
 
-import com.example.danmuse.model.Song
+import com.example.danmuse.media.model.Song
 import kotlinx.serialization.Serializable
 
 @Serializable

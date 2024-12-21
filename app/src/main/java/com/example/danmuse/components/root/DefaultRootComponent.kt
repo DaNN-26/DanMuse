@@ -5,13 +5,15 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
-import com.example.danmuse.components.root.RootComponent.Child
 import com.example.danmuse.components.app.DefaultAppComponent
+import com.example.danmuse.components.root.RootComponent.Child
+import com.example.danmuse.media.controller.SongController
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class DefaultRootComponent @Inject constructor(
-    private val componentContext: ComponentContext
+    private val componentContext: ComponentContext,
+    private val controller: SongController
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -34,7 +36,7 @@ class DefaultRootComponent @Inject constructor(
         }
 
     private fun appComponent(componentContext: ComponentContext) =
-        DefaultAppComponent(componentContext)
+        DefaultAppComponent(componentContext, controller)
 
     @Serializable
     private sealed interface Config {

@@ -58,6 +58,7 @@ val decomposeVersion: String by project
 val serializationVersion: String by project
 val hiltVersion: String by project
 val media3Version: String by project
+val coilVersion: String by project
 
 dependencies {
 
@@ -89,7 +90,7 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:$hiltVersion")
 
     //coil
-    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation("io.coil-kt.coil3:coil-compose:$coilVersion")
 
     //mediaPlayer
     implementation("androidx.media3:media3-exoplayer:$media3Version")
@@ -97,4 +98,10 @@ dependencies {
     implementation("androidx.media3:media3-datasource-okhttp:$media3Version") // dataloading with okhttp
     implementation("androidx.media3:media3-ui:$media3Version") // ui
     implementation("androidx.media3:media3-session:$media3Version")
+
+    //icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.5")
+
+    //accompanist
+    implementation("com.google.accompanist:accompanist-permissions:0.37.0")
 }

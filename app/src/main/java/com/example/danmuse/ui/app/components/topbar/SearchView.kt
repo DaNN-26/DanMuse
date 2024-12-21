@@ -1,4 +1,4 @@
-package com.example.danmuse.ui.components
+package com.example.danmuse.ui.app.components.topbar
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.isSystemInDarkTheme

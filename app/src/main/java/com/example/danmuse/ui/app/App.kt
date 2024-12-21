@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
@@ -14,22 +15,29 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.example.danmuse.components.app.AppComponent
 import com.example.danmuse.components.app.AppComponent.Child
-import com.example.danmuse.mvi.home.HomeIntent
+import com.example.danmuse.components.songbar.SongBarComponent
+import com.example.danmuse.mvi.app.home.HomeIntent
+import com.example.danmuse.ui.app.components.navbar.BottomNavBar
+import com.example.danmuse.ui.app.components.songBar.SongBar
+import com.example.danmuse.ui.app.components.topbar.TopBar
 import com.example.danmuse.ui.app.home.Home
 import com.example.danmuse.ui.app.online.Online
 import com.example.danmuse.ui.app.profile.Profile
-import com.example.danmuse.ui.components.BottomNavBar
-import com.example.danmuse.ui.components.BottomSongBar
-import com.example.danmuse.ui.components.TopBar
+import com.example.danmuse.ui.app.songPlayer.SongPlayer
 
 @Composable
 fun App(
-    component: AppComponent
+    component: AppComponent,
+    songBarComponent: SongBarComponent
 ) {
     val stack = component.stack
+    val stackState by stack.subscribeAsState()
+
+    val songState by component.songState.subscribeAsState()
+
     Scaffold(
         topBar = {
-            when (val instance = stack.value.active.instance) {
+            when (val instance = stackState.active.instance) {
                 is Child.Home ->
                     TopBar(
                         isSearching = true,
@@ -43,25 +51,36 @@ fun App(
                     TopBar(isSearching = false)
                 is Child.Profile ->
                     TopBar(isSearching = false)
+                is Child.SongPlayer ->
+                    TopBar(isSearching = false)
             }
         },
         bottomBar = {
             Column {
-                BottomSongBar()
-                BottomNavBar()
+                SongBar(
+                    component = songBarComponent,
+                    openPlayer = component::openPlayer,
+                    isSongBarVisible = songState.song != null && stackState.active.instance !is Child.SongPlayer
+                )
+                BottomNavBar(
+                    isBottomNavBarVisible = stackState.active.instance !is Child.SongPlayer
+                )
             }
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         Children(
             stack = stack,
-            animation = stackAnimation(fade() + scale()), 
-            modifier = Modifier.padding(paddingValues)
+            animation = stackAnimation(fade() + scale())
         ) { child ->
             when (val instance = child.instance) {
-                is Child.Home -> Home(instance.component)
+                is Child.Home -> Home(
+                    instance.component,
+                    modifier = Modifier.padding(paddingValues)
+                )
                 is Child.Profile -> Profile()
-                is Child.Online -> Online() 
+                is Child.Online -> Online()
+                is Child.SongPlayer -> SongPlayer(instance.component)
             }
         }     
     }

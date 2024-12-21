@@ -9,14 +9,16 @@ import android.provider.MediaStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.update
-import com.example.danmuse.model.Song
-import com.example.danmuse.mvi.home.HomeIntent
-import com.example.danmuse.mvi.home.HomeState
+import com.example.danmuse.media.controller.SongController
+import com.example.danmuse.media.model.Song
+import com.example.danmuse.mvi.app.home.HomeIntent
+import com.example.danmuse.mvi.app.home.HomeState
 import java.lang.String.format
 import javax.inject.Inject
 
 class DefaultHomeComponent @Inject constructor(
-    private val componentContext: ComponentContext
+    private val componentContext: ComponentContext,
+    private val controller: SongController
 ) : HomeComponent, ComponentContext by componentContext {
 
     private val _state = MutableValue(
@@ -24,6 +26,8 @@ class DefaultHomeComponent @Inject constructor(
     )
 
     override val state = _state
+
+    override val songState = controller.songState
 
     override fun processIntent(intent: HomeIntent) {
         when (intent) {
@@ -33,19 +37,39 @@ class DefaultHomeComponent @Inject constructor(
                 getTracksBySearchQuery()
             }
             is HomeIntent.ClearSearchQuery -> _state.update { it.copy(searchQuery = "") }
+            is HomeIntent.OnSongSelected -> controller.selectMusic(intent.song, state.value.songsList)
         }
     }
 
     private fun getTracksBySearchQuery() {
         _state.update { state ->
+            val normalizedQueryParts = state.searchQuery
+                .replace(",", "")
+                .replace("  ", " ")
+                .trim()
+                .lowercase()
+                .split(" ")
+
             state.copy(
                 filteredSongsList = state.songsList.filter { track ->
-                    track.name.contains(state.searchQuery, true)
+                    val normalizedTrackName = track.name
+                        .replace(",", "")
+                        .replace("  ", " ")
+                        .trim()
+                        .lowercase()
+                    val normalizedArtistName = track.artist
+                        ?.replace(",", "")
+                        ?.replace("  ", " ")
+                        ?.trim()
+                        ?.lowercase()
+
+                    normalizedQueryParts.all { queryPart ->
+                        normalizedTrackName.contains(queryPart) || (normalizedArtistName?.contains(queryPart) == true)
+                    }
                 }
             )
         }
     }
-
     private fun getSongsFromDevice(context: Context) {
         val songsList = mutableListOf<Song>()
         val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -56,7 +80,8 @@ class DefaultHomeComponent @Inject constructor(
 
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.DISPLAY_NAME,
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.ALBUM_ID
@@ -68,7 +93,8 @@ class DefaultHomeComponent @Inject constructor(
         cursor?.use {
             while (it.moveToNext()) {
                 val id = it.getLong(it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
-                val name = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME))
+                val name = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE))
+                val artist = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST))
                 val data = it.getString(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA))
                 val duration = it.getLong(it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
                 val albumId = it.getLong(it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
@@ -77,15 +103,18 @@ class DefaultHomeComponent @Inject constructor(
                     albumId
                 )
 
-                songsList.add(Song(
-                    id = id,
-                    name = name,
-                    path = data,
-                    duration = formatDuration(duration),
-                    albumId = albumId,
-                    albumArtPath = albumArtPath,
-                    isAlbumArtExists = hasAlbumArtUri(context, albumArtPath)
-                ))
+                songsList.add(
+                    Song(
+                        id = id,
+                        name = name,
+                        artist = artist,
+                        path = data,
+                        duration = formatDuration(duration),
+                        albumId = albumId,
+                        albumArtPath = albumArtPath,
+                        isAlbumArtExists = hasAlbumArtUri(context, albumArtPath)
+                    )
+                )
             }
         }
         _state.update { it.copy(songsList = songsList) }
