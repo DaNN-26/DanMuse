@@ -2,6 +2,8 @@ package com.example.danmuse.media.di
 
 import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
+import com.example.danmuse.media.controller.data.SongControllerImpl
+import com.example.danmuse.media.controller.domain.SongController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,4 +18,9 @@ object MediaModule {
     @Provides
     fun provideMediaPlayer(@ApplicationContext context: Context) =
         ExoPlayer.Builder(context).build()
+
+    @Singleton
+    @Provides
+    fun provideSongController(player: ExoPlayer): SongController =
+        SongControllerImpl(player)
 }

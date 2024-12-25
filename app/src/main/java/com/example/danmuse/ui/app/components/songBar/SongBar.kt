@@ -1,6 +1,5 @@
 package com.example.danmuse.ui.app.components.songBar
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SongBar(
     component: SongBarComponent,
-    openPlayer: () -> Unit,
-    isSongBarVisible: Boolean
+    openPlayer: () -> Unit
 ) {
     val songState by component.state.subscribeAsState()
 
@@ -67,9 +65,6 @@ fun SongBar(
         }
     }
 
-    AnimatedVisibility(
-        visible = isSongBarVisible,
-    ) {
         Column {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -118,7 +113,6 @@ fun SongBar(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-    }
 }
 
 @Composable

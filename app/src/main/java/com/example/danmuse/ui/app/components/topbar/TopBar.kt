@@ -1,8 +1,12 @@
 package com.example.danmuse.ui.app.components.topbar
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -14,10 +18,12 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    isSearching: Boolean,
+    isSearching: Boolean = false,
+    canNavigateBack: Boolean = false,
     query: String = "",
     onQueryChange: (String) -> Unit = {},
-    clearQuery: () -> Unit = {}
+    clearQuery: () -> Unit = {},
+    navigateBack: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -29,6 +35,12 @@ fun TopBar(
                 )
             else
                 Text(text = "DanMuse")
+        },
+        navigationIcon = {
+            if(canNavigateBack)
+                IconButton(onClick = navigateBack) {
+                    Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "button back")
+                }
         },
         colors = if(isSystemInDarkTheme())
             TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)

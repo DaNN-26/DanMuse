@@ -5,12 +5,13 @@ import com.arkivanov.decompose.DelicateDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.example.danmuse.components.app.AppComponent.Child
 import com.example.danmuse.components.app.home.DefaultHomeComponent
 import com.example.danmuse.components.app.songPlayer.DefaultSongPlayerComponent
-import com.example.danmuse.media.controller.SongController
+import com.example.danmuse.media.controller.domain.SongController
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
@@ -52,6 +53,10 @@ class DefaultAppComponent @Inject constructor(
     @OptIn(DelicateDecomposeApi::class)
     override fun openPlayer() {
         navigation.push(Config.SongPlayer)
+    }
+
+    override fun navigateBack() {
+        navigation.pop()
     }
 
     @Serializable

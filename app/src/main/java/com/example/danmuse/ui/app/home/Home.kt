@@ -39,13 +39,13 @@ fun Home(
     val state by component.state.subscribeAsState()
     val context = LocalContext.current
 
+    val songState by component.songState.subscribeAsState()
+
     val permissionState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             rememberPermissionState(android.Manifest.permission.READ_MEDIA_AUDIO)
         else
             rememberPermissionState(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-
-    val songState by component.songState.subscribeAsState()
 
     Surface(
         modifier = modifier

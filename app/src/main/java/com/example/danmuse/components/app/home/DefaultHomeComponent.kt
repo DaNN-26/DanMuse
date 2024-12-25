@@ -1,6 +1,5 @@
 package com.example.danmuse.components.app.home
 
-import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
@@ -9,11 +8,11 @@ import android.provider.MediaStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.update
-import com.example.danmuse.media.controller.SongController
+import com.example.danmuse.media.controller.domain.SongController
 import com.example.danmuse.media.model.Song
 import com.example.danmuse.mvi.app.home.HomeIntent
 import com.example.danmuse.mvi.app.home.HomeState
-import java.lang.String.format
+import com.example.danmuse.util.formatDuration
 import javax.inject.Inject
 
 class DefaultHomeComponent @Inject constructor(
@@ -109,7 +108,7 @@ class DefaultHomeComponent @Inject constructor(
                         name = name,
                         artist = artist,
                         path = data,
-                        duration = formatDuration(duration),
+                        duration = duration.formatDuration(),
                         albumId = albumId,
                         albumArtPath = albumArtPath,
                         isAlbumArtExists = hasAlbumArtUri(context, albumArtPath)
@@ -128,13 +127,6 @@ class DefaultHomeComponent @Inject constructor(
         } catch (e: Exception) {
             false
         }
-
-    @SuppressLint("DefaultLocale")
-    private fun formatDuration(duration: Long): String {
-        val minutes = (duration / 1000) / 60
-        val seconds = (duration / 1000) % 60
-        return format("%02d:%02d", minutes, seconds)
-    }
 
     companion object {
         const val HOME_COMPONENT = "HOME_COMPONENT"

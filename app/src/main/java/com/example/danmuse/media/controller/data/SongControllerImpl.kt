@@ -1,19 +1,22 @@
-package com.example.danmuse.media.controller
+package com.example.danmuse.media.controller.data
 
-import android.annotation.SuppressLint
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.update
+import com.example.danmuse.media.controller.domain.SongController
+import com.example.danmuse.media.controller.model.SongState
 import com.example.danmuse.media.model.Song
+import com.example.danmuse.util.formatDuration
 import javax.inject.Inject
 
-class SongController @Inject constructor(
+class SongControllerImpl @Inject constructor(
     private val mediaPlayer: ExoPlayer
-): SongEvent {
+): SongController {
 
     private val _songState = MutableValue(SongState())
-    val songState = _songState
+
+    override val songState = _songState
 
     init {
         _songState.update { it.copy(
@@ -74,7 +77,7 @@ class SongController @Inject constructor(
     override fun updateSongProgress() {
         _songState.update { it.copy(
             currentPosition = mediaPlayer.currentPosition,
-            formattedCurrentPosition = formatDuration(mediaPlayer.currentPosition)
+            formattedCurrentPosition = mediaPlayer.currentPosition.formatDuration()
         ) }
     }
 
@@ -118,11 +121,4 @@ class SongController @Inject constructor(
 
     private fun getTrackIndex() =
         songState.value.songList.indexOf(songState.value.song)
-
-    @SuppressLint("DefaultLocale")
-    private fun formatDuration(duration: Long): String {
-        val minutes = (duration / 1000) / 60
-        val seconds = (duration / 1000) % 60
-        return java.lang.String.format("%02d:%02d", minutes, seconds)
-    }
 }

@@ -1,7 +1,7 @@
 package com.example.danmuse.components.songbar
 
 import com.arkivanov.decompose.ComponentContext
-import com.example.danmuse.media.controller.SongController
+import com.example.danmuse.media.controller.domain.SongController
 import com.example.danmuse.mvi.songBar.SongBarIntent
 import javax.inject.Inject
 

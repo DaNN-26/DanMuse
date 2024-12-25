@@ -7,7 +7,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.example.danmuse.components.app.DefaultAppComponent
 import com.example.danmuse.components.root.RootComponent.Child
-import com.example.danmuse.media.controller.SongController
+import com.example.danmuse.media.controller.domain.SongController
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 

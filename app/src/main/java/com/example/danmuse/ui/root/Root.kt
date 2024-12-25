@@ -9,14 +9,12 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.example.danmuse.components.root.RootComponent
 import com.example.danmuse.components.root.RootComponent.Child
 import com.example.danmuse.components.songbar.SongBarComponent
-import com.example.danmuse.media.controller.SongController
 import com.example.danmuse.ui.app.App
 
 @Composable
 fun Root(
     component: RootComponent,
-    songBarComponent: SongBarComponent,
-    controller: SongController
+    songBarComponent: SongBarComponent
 ) {
     val stack = component.stack
     Children(

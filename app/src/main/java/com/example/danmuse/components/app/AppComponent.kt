@@ -4,7 +4,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.example.danmuse.components.app.home.HomeComponent
 import com.example.danmuse.components.app.songPlayer.SongPlayerComponent
-import com.example.danmuse.media.controller.SongState
+import com.example.danmuse.media.controller.model.SongState
 
 interface AppComponent {
     val stack: Value<ChildStack<*, Child>>
@@ -12,6 +12,8 @@ interface AppComponent {
     val songState: Value<SongState>
 
     fun openPlayer()
+
+    fun navigateBack()
 
     sealed interface Child {
         class Home(val component: HomeComponent) : Child

@@ -1,5 +1,6 @@
 package com.example.danmuse.ui.app.songPlayer
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,9 +49,7 @@ fun SongPlayer(
 ) {
     val state by component.state.subscribeAsState()
 
-    val animatedImage by animateDpAsState(targetValue = if(state.isPaused) 20.dp else 0.dp,
-        label = ""
-    )
+    val animatedImage by animateDpAsState(targetValue = if(state.isPaused) 20.dp else 0.dp, label = "")
 
     DisposableEffect(state.player) {
         val listener = object : Player.Listener {
@@ -103,7 +103,8 @@ fun SongPlayer(
             songName = state.song?.name ?: "Нет названия",
             songArtist = state.song?.artist ?: "Нет исполнителя",
             onValueChangeFinished = { component.processIntent(SongPlayerIntent.Seek(it.toLong())) },
-            duration = state.duration.toFloat()
+            duration = state.duration.toFloat(),
+            formattedDuration = state.song?.duration ?: "00:00"
         )
         Spacer(modifier = Modifier.height(50.dp))
         SongPlayerButtonsRow(
@@ -120,15 +121,19 @@ fun SongPlayer(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun SongPlayerSlider(
     currentPosition: Float,
     songName: String,
     songArtist: String,
     onValueChangeFinished: (Float) -> Unit,
-    duration: Float
+    duration: Float,
+    formattedDuration: String
 ) {
-    var sliderPosition by remember { mutableFloatStateOf(currentPosition) }
+    var sliderPosition by remember(currentPosition) { mutableFloatStateOf(currentPosition) }
+
+    var formattedSliderPosition by remember { mutableStateOf("00:00") }
 
     Column(
         modifier = Modifier
@@ -156,8 +161,23 @@ fun SongPlayerSlider(
                 thumbColor = MaterialTheme.colorScheme.secondary
             )
         )
-        LaunchedEffect(currentPosition) {
-            sliderPosition = currentPosition
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = formattedSliderPosition,
+                fontSize = 16.sp
+            )
+            Text(
+                text = formattedDuration,
+                fontSize = 16.sp
+            )
+        }
+        LaunchedEffect(sliderPosition) {
+            val minutes = (sliderPosition.toLong() / 1000) / 60
+            val seconds = (sliderPosition.toLong() / 1000) % 60
+            formattedSliderPosition = String.format("%02d:%02d", minutes, seconds)
         }
     }
 }
@@ -174,7 +194,7 @@ fun SongPlayerButtonsRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 40.dp)
+            .padding(horizontal = 50.dp)
     ) {
         SongPlayerIconButton(
             onButtonClick = onBackButtonClick,

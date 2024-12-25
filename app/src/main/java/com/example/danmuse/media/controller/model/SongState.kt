@@ -1,4 +1,4 @@
-package com.example.danmuse.media.controller
+package com.example.danmuse.media.controller.model
 
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.danmuse.media.model.Song

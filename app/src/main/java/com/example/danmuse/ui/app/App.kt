@@ -1,11 +1,14 @@
 package com.example.danmuse.ui.app
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
@@ -35,6 +38,10 @@ fun App(
 
     val songState by component.songState.subscribeAsState()
 
+    val isSongBarVisible by rememberSaveable(songState.song, stackState.active.instance) {
+        mutableStateOf(songState.song != null && stackState.active.instance !is Child.SongPlayer)
+    }
+
     Scaffold(
         topBar = {
             when (val instance = stackState.active.instance) {
@@ -48,20 +55,24 @@ fun App(
                         clearQuery = { instance.component.processIntent(HomeIntent.ClearSearchQuery) },
                     )
                 is Child.Online ->
-                    TopBar(isSearching = false)
+                    TopBar()
                 is Child.Profile ->
-                    TopBar(isSearching = false)
+                    TopBar()
                 is Child.SongPlayer ->
-                    TopBar(isSearching = false)
+                    TopBar(
+                        canNavigateBack = true,
+                        navigateBack = component::navigateBack
+                    )
             }
         },
         bottomBar = {
             Column {
-                SongBar(
-                    component = songBarComponent,
-                    openPlayer = component::openPlayer,
-                    isSongBarVisible = songState.song != null && stackState.active.instance !is Child.SongPlayer
-                )
+                AnimatedVisibility(isSongBarVisible) {
+                    SongBar(
+                        component = songBarComponent,
+                        openPlayer = component::openPlayer
+                    )
+                }
                 BottomNavBar(
                     isBottomNavBarVisible = stackState.active.instance !is Child.SongPlayer
                 )
