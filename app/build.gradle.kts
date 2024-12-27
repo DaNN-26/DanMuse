@@ -98,6 +98,8 @@ dependencies {
     implementation("androidx.media3:media3-datasource-okhttp:$media3Version") // dataloading with okhttp
     implementation("androidx.media3:media3-ui:$media3Version") // ui
     implementation("androidx.media3:media3-session:$media3Version")
+    implementation("androidx.media:media:1.6.0")
+
 
     //icons
     implementation("androidx.compose.material:material-icons-extended:1.7.5")

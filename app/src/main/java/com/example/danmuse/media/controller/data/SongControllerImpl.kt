@@ -1,18 +1,25 @@
 package com.example.danmuse.media.controller.data
 
+import android.content.Context
+import android.content.Intent
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.update
 import com.example.danmuse.media.controller.domain.SongController
 import com.example.danmuse.media.controller.model.SongState
 import com.example.danmuse.media.model.Song
+import com.example.danmuse.media.service.SongService
 import com.example.danmuse.util.formatDuration
 import javax.inject.Inject
 
 class SongControllerImpl @Inject constructor(
-    private val mediaPlayer: ExoPlayer
+    private val mediaPlayer: ExoPlayer,
+    private val context: Context
 ): SongController {
+
+    val intent = Intent(context, SongService::class.java)
 
     private val _songState = MutableValue(SongState())
 
@@ -26,7 +33,17 @@ class SongControllerImpl @Inject constructor(
 
     private fun playNewSong() {
         mediaPlayer.clearMediaItems()
-        val mediaItem = MediaItem.fromUri(songState.value.song!!.path)
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(songState.value.song?.path!!)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(songState.value.song?.name)
+                    .setArtist(songState.value.song?.artist)
+                    .setArtworkUri(songState.value.song?.albumArtPath)
+                    .build()
+            )
+            .build()
         mediaPlayer.setMediaItem(mediaItem)
 
         mediaPlayer.prepare()
@@ -35,6 +52,7 @@ class SongControllerImpl @Inject constructor(
             isPaused = false,
             trackIndex = getTrackIndex()
         ) }
+        context.startService(intent)
     }
 
     override fun playSong() {

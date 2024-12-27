@@ -21,6 +21,9 @@ object MediaModule {
 
     @Singleton
     @Provides
-    fun provideSongController(player: ExoPlayer): SongController =
-        SongControllerImpl(player)
+    fun provideSongController(
+        @ApplicationContext context: Context,
+        player: ExoPlayer
+    ): SongController =
+        SongControllerImpl(player, context)
 }
