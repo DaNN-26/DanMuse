@@ -9,7 +9,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.example.danmuse.components.root.RootComponent
 import com.example.danmuse.components.root.RootComponent.Child
 import com.example.danmuse.components.songbar.SongBarComponent
-import com.example.danmuse.ui.app.App
+import com.example.danmuse.ui.main.Main
 
 @Composable
 fun Root(
@@ -22,8 +22,8 @@ fun Root(
         animation = stackAnimation(fade() + scale())
     ) { child ->
         when (val instance = child.instance) {
-            is Child.App ->
-                App(
+            is Child.Main ->
+                Main(
                     component = instance.component,
                     songBarComponent = songBarComponent
                 )

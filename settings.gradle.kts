@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "DanMuse"
 include(":app")
- 
+include(":media")
+include(":mvi")
+include(":util")

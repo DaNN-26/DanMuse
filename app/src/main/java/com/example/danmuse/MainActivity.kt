@@ -9,8 +9,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.arkivanov.decompose.defaultComponentContext
 import com.example.danmuse.components.root.DefaultRootComponent
 import com.example.danmuse.components.songbar.DefaultSongBarComponent
-import com.example.danmuse.media.controller.domain.SongController
-import com.example.danmuse.media.service.SongService
+import com.example.danmuse.service.SongService
 import com.example.danmuse.ui.root.Root
 import com.example.danmuse.ui.theme.DanMuseTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +21,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var player: ExoPlayer
     @Inject
-    lateinit var controller: SongController
+    lateinit var controller: com.example.media.controller.domain.SongController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +46,6 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun onDestroy() {

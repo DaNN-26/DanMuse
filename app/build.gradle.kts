@@ -61,6 +61,9 @@ val media3Version: String by project
 val coilVersion: String by project
 
 dependencies {
+    implementation(project(":mvi"))
+    implementation(project(":media"))
+    implementation(project(":util"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -85,21 +88,18 @@ dependencies {
     //serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
+    //mediaPlayer
+    implementation("androidx.media3:media3-exoplayer:$media3Version")
+    implementation("androidx.media3:media3-ui:$media3Version") // ui
+    implementation("androidx.media3:media3-session:$media3Version")
+    implementation("androidx.media:media:1.6.0")
+
     //hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-compiler:$hiltVersion")
 
     //coil
     implementation("io.coil-kt.coil3:coil-compose:$coilVersion")
-
-    //mediaPlayer
-    implementation("androidx.media3:media3-exoplayer:$media3Version")
-    implementation("androidx.media3:media3-exoplayer-dash:$media3Version") // dash playback
-    implementation("androidx.media3:media3-datasource-okhttp:$media3Version") // dataloading with okhttp
-    implementation("androidx.media3:media3-ui:$media3Version") // ui
-    implementation("androidx.media3:media3-session:$media3Version")
-    implementation("androidx.media:media:1.6.0")
-
 
     //icons
     implementation("androidx.compose.material:material-icons-extended:1.7.5")

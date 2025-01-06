@@ -5,9 +5,9 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
-import com.example.danmuse.components.app.DefaultAppComponent
+import com.example.danmuse.components.main.DefaultMainComponent
 import com.example.danmuse.components.root.RootComponent.Child
-import com.example.danmuse.media.controller.domain.SongController
+import com.example.media.controller.domain.SongController
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class DefaultRootComponent @Inject constructor(
     override val stack: Value<ChildStack<*, Child>> =
         childStack(
             source = navigation,
-            initialConfiguration = Config.App,
+            initialConfiguration = Config.Main,
             serializer = Config.serializer(),
             handleBackButton = false,
             childFactory = ::child
@@ -32,15 +32,15 @@ class DefaultRootComponent @Inject constructor(
         componentContext: ComponentContext
     ): Child =
         when (config) {
-            is Config.App -> Child.App(appComponent(componentContext))
+            is Config.Main -> Child.Main(appComponent(componentContext))
         }
 
     private fun appComponent(componentContext: ComponentContext) =
-        DefaultAppComponent(componentContext, controller)
+        DefaultMainComponent(componentContext, controller)
 
     @Serializable
     private sealed interface Config {
         @Serializable
-        data object App : Config
+        data object Main : Config
     }
 }
