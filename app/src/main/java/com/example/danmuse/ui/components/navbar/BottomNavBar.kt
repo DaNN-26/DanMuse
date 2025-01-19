@@ -27,7 +27,9 @@ import com.example.danmuse.model.BottomNavigationItem
 
 @Composable
 fun BottomNavBar(
-    isBottomNavBarVisible: Boolean
+    isBottomNavBarVisible: Boolean,
+    navigateToHome: () -> Unit,
+    navigateToVkMusic: () -> Unit
 ) {
     var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
@@ -51,8 +53,14 @@ fun BottomNavBar(
                     selected = selectedIndex == index,
                     onClick = {
                         when (index) {
-                            0 -> selectedIndex = index
-                            1 -> selectedIndex = index
+                            0 -> {
+                                navigateToHome()
+                                selectedIndex = index
+                            }
+                            1 -> {
+                                navigateToVkMusic()
+                                selectedIndex = index
+                            }
                             2 -> selectedIndex = index
                         }
                     },
@@ -77,7 +85,7 @@ val items = listOf(
         icon = Icons.Rounded.Home
     ),
     BottomNavigationItem(
-        title = "Онлайн",
+        title = "ВК Музыка",
         icon = Icons.Rounded.List
     ),
     BottomNavigationItem(

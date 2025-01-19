@@ -8,31 +8,35 @@ import android.provider.MediaStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.update
+import com.example.media.controller.domain.SongController
+import com.example.media.model.Song
+import com.example.mvi.main.home.HomeIntent
+import com.example.mvi.main.home.HomeState
 import com.example.util.formatDuration
 import javax.inject.Inject
 
 class DefaultHomeComponent @Inject constructor(
     private val componentContext: ComponentContext,
-    private val controller: com.example.media.controller.domain.SongController
+    private val controller: SongController
 ) : HomeComponent, ComponentContext by componentContext {
 
     private val _state = MutableValue(
-        stateKeeper.consume(HOME_COMPONENT, com.example.mvi.app.home.HomeState.serializer()) ?: com.example.mvi.app.home.HomeState()
+        stateKeeper.consume(HOME_COMPONENT, HomeState.serializer()) ?: HomeState()
     )
 
     override val state = _state
 
     override val songState = controller.songState
 
-    override fun processIntent(intent: com.example.mvi.app.home.HomeIntent) {
+    override fun processIntent(intent: HomeIntent) {
         when (intent) {
-            is com.example.mvi.app.home.HomeIntent.InitializeSongs -> getSongsFromDevice(intent.context)
-            is com.example.mvi.app.home.HomeIntent.OnSearchQueryChange -> {
+            is HomeIntent.InitializeSongs -> getSongsFromDevice(intent.context)
+            is HomeIntent.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = intent.searchQuery) }
                 getTracksBySearchQuery()
             }
-            is com.example.mvi.app.home.HomeIntent.ClearSearchQuery -> _state.update { it.copy(searchQuery = "") }
-            is com.example.mvi.app.home.HomeIntent.OnSongSelected -> controller.selectMusic(intent.song, state.value.songsList)
+            is HomeIntent.ClearSearchQuery -> _state.update { it.copy(searchQuery = "") }
+            is HomeIntent.OnSongSelected -> controller.selectMusic(intent.song, state.value.songsList)
         }
     }
 
@@ -46,7 +50,7 @@ class DefaultHomeComponent @Inject constructor(
                 .split(" ")
 
             state.copy(
-                filteredSongsList = state.songsList.filter { track ->
+                songsList = state.filteredSongsList.filter { track ->
                     val normalizedTrackName = track.name
                         .replace(",", "")
                         .replace("  ", " ")
@@ -66,7 +70,7 @@ class DefaultHomeComponent @Inject constructor(
         }
     }
     private fun getSongsFromDevice(context: Context) {
-        val songsList = mutableListOf<com.example.media.model.Song>()
+        val songsList = mutableListOf<Song>()
         val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
         } else {
@@ -99,7 +103,7 @@ class DefaultHomeComponent @Inject constructor(
                 )
 
                 songsList.add(
-                    com.example.media.model.Song(
+                    Song(
                         id = id,
                         name = name,
                         artist = artist,

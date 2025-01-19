@@ -24,10 +24,11 @@ import com.example.danmuse.ui.components.navbar.BottomNavBar
 import com.example.danmuse.ui.components.songBar.SongBar
 import com.example.danmuse.ui.components.topbar.TopBar
 import com.example.danmuse.ui.main.home.Home
-import com.example.danmuse.ui.main.online.Online
 import com.example.danmuse.ui.main.profile.Profile
 import com.example.danmuse.ui.main.songPlayer.SongPlayer
-import com.example.mvi.app.home.HomeIntent
+import com.example.danmuse.ui.main.vkMusic.VkMusic
+import com.example.mvi.main.home.HomeIntent
+import com.example.mvi.main.vkMusic.VkMusicIntent
 
 @Composable
 fun Main(
@@ -55,8 +56,15 @@ fun Main(
                         },
                         clearQuery = { instance.component.processIntent(HomeIntent.ClearSearchQuery) },
                     )
-                is Child.Online ->
-                    TopBar()
+                is Child.VkMusic ->
+                    TopBar(
+                        isSearching = true,
+                        query = instance.component.state.subscribeAsState().value.searchQuery,
+                        onQueryChange = { newQuery ->
+                            instance.component.processIntent(VkMusicIntent.OnSearchQueryChange(newQuery))
+                        },
+                        clearQuery = { instance.component.processIntent(VkMusicIntent.ClearSearchQuery) },
+                    )
                 is Child.Profile ->
                     TopBar()
                 is Child.SongPlayer ->
@@ -75,7 +83,9 @@ fun Main(
                     )
                 }
                 BottomNavBar(
-                    isBottomNavBarVisible = stackState.active.instance !is Child.SongPlayer
+                    isBottomNavBarVisible = stackState.active.instance !is Child.SongPlayer,
+                    navigateToHome = component::navigateToHome,
+                    navigateToVkMusic = component::navigateToVkMusic,
                 )
             }
         },
@@ -91,7 +101,10 @@ fun Main(
                     modifier = Modifier.padding(paddingValues)
                 )
                 is Child.Profile -> Profile()
-                is Child.Online -> Online()
+                is Child.VkMusic -> VkMusic(
+                    instance.component,
+                    modifier = Modifier.padding(paddingValues)
+                )
                 is Child.SongPlayer -> SongPlayer(instance.component)
             }
         }     

@@ -1,12 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android") version "2.51.1"
 
     kotlin("plugin.serialization") version "2.0.0"
 }
+
+
 
 android {
     namespace = "com.example.danmuse"
@@ -63,6 +66,7 @@ val coilVersion: String by project
 dependencies {
     implementation(project(":mvi"))
     implementation(project(":media"))
+    implementation(project(":network"))
     implementation(project(":util"))
 
     implementation(libs.androidx.core.ktx)
@@ -100,6 +104,10 @@ dependencies {
 
     //coil
     implementation("io.coil-kt.coil3:coil-compose:$coilVersion")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:$coilVersion")
+    //okhttp3
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     //icons
     implementation("androidx.compose.material:material-icons-extended:1.7.5")

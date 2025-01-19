@@ -9,6 +9,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.example.danmuse.components.root.RootComponent
 import com.example.danmuse.components.root.RootComponent.Child
 import com.example.danmuse.components.songbar.SongBarComponent
+import com.example.danmuse.ui.auth.Auth
 import com.example.danmuse.ui.main.Main
 
 @Composable
@@ -27,6 +28,7 @@ fun Root(
                     component = instance.component,
                     songBarComponent = songBarComponent
                 )
+            is Child.Auth -> Auth(component = instance.component)
         }
     }
 }

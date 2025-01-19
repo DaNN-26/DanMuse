@@ -23,7 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.example.danmuse.components.main.home.HomeComponent
-import com.example.danmuse.ui.main.home.components.MusicItem
+import com.example.danmuse.ui.main.components.MusicItem
+import com.example.media.model.Song
+import com.example.mvi.main.home.HomeIntent
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -53,14 +55,14 @@ fun Home(
             RequestMediaPermission(permissionState)
         else {
             LaunchedEffect(Unit) {
-                component.processIntent(com.example.mvi.app.home.HomeIntent.InitializeSongs(context))
+                component.processIntent(HomeIntent.InitializeSongs(context))
             }
             HomeMusicColumn(
                 songsList = state.songsList,
                 filteredSongsList = state.filteredSongsList,
                 searchQuery = state.searchQuery,
                 formattedCurrentPosition = songState.formattedCurrentPosition,
-                onMusicItemClick = { component.processIntent(com.example.mvi.app.home.HomeIntent.OnSongSelected(it)) },
+                onMusicItemClick = { component.processIntent(HomeIntent.OnSongSelected(it)) },
                 currentSong = songState.song
             )
         }
@@ -92,12 +94,12 @@ fun RequestMediaPermission(
 
 @Composable
 fun HomeMusicColumn(
-    songsList: List<com.example.media.model.Song>,
-    filteredSongsList: List<com.example.media.model.Song>,
+    songsList: List<Song>,
+    filteredSongsList: List<Song>,
     searchQuery: String,
     formattedCurrentPosition: String,
-    onMusicItemClick: (com.example.media.model.Song) -> Unit,
-    currentSong: com.example.media.model.Song?
+    onMusicItemClick: (Song) -> Unit,
+    currentSong: Song?
 ) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,

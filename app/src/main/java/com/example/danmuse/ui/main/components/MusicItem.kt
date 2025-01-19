@@ -1,4 +1,4 @@
-package com.example.danmuse.ui.main.home.components
+package com.example.danmuse.ui.main.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,19 +17,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.danmuse.R
+import com.example.media.model.Song
 
 @Composable
 fun MusicItem(
-    song: com.example.media.model.Song,
+    song: Song,
     formattedCurrentPosition: String,
-    currentSong: com.example.media.model.Song?,
-    onMusicItemClick: (com.example.media.model.Song) -> Unit
+    currentSong: Song?,
+    onMusicItemClick: (Song) -> Unit
 ) {
 
     Row(
@@ -41,7 +45,10 @@ fun MusicItem(
             Divider(modifier = Modifier.size(width = 3.dp, height = 65.dp))
         AsyncImage(
             model = if(song.isAlbumArtExists)
-                song.albumArtPath
+                ImageRequest.Builder(LocalContext.current)
+                    .data(song.albumArtPath)
+                    .crossfade(true)
+                    .build()
             else
                 R.drawable.music_icon,
             contentDescription = null,

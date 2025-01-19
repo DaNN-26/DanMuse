@@ -11,8 +11,8 @@ data class Song(
     val artist: String? = null,
     val path: String,
     val duration: String,
-    val albumId: Long?,
+    val albumId: Long? = null,
     @Contextual
-    val albumArtPath: Uri?,
-    val isAlbumArtExists: Boolean
+    val albumArtPath: Uri? = null,
+    val isAlbumArtExists: Boolean = false
 )

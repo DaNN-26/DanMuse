@@ -43,6 +43,7 @@ val serializationVersion: String by project
 
 dependencies {
     implementation(project(":util"))
+    implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

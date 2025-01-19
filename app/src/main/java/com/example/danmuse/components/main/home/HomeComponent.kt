@@ -2,8 +2,8 @@ package com.example.danmuse.components.main.home
 
 import com.arkivanov.decompose.value.Value
 import com.example.media.controller.domain.model.SongState
-import com.example.mvi.app.home.HomeIntent
-import com.example.mvi.app.home.HomeState
+import com.example.mvi.main.home.HomeIntent
+import com.example.mvi.main.home.HomeState
 import kotlinx.coroutines.flow.StateFlow
 
 interface HomeComponent {

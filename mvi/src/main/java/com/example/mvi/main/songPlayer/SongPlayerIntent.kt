@@ -1,4 +1,4 @@
-package com.example.mvi.app.songPlayer
+package com.example.mvi.main.songPlayer
 
 sealed class SongPlayerIntent {
     data object Play : SongPlayerIntent()

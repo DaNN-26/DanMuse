@@ -54,7 +54,7 @@ fun SongPlayer(
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if(playbackState == Player.STATE_READY || playbackState == Player.STATE_BUFFERING)
-                    component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.SetDuration)
+                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.SetDuration)
             }
         }
         state.player?.addListener(listener)
@@ -66,13 +66,13 @@ fun SongPlayer(
 
     LaunchedEffect(state.player) {
         while (true) {
-            component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.UpdateProgress)
+            component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.UpdateProgress)
             delay(1000L)
             if (state.currentPosition > state.duration)
                 if (state.trackIndex != state.songList.lastIndex)
-                    component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Next)
+                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Next)
                 else
-                    component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Pause)
+                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Pause)
         }
     }
 
@@ -101,7 +101,7 @@ fun SongPlayer(
             currentPosition = state.currentPosition.toFloat(),
             songName = state.song?.name ?: "Нет названия",
             songArtist = state.song?.artist ?: "Нет исполнителя",
-            onValueChangeFinished = { component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Seek(it.toLong())) },
+            onValueChangeFinished = { component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Seek(it.toLong())) },
             duration = state.duration.toFloat(),
             formattedDuration = state.song?.duration ?: "00:00"
         )
@@ -109,12 +109,12 @@ fun SongPlayer(
         SongPlayerButtonsRow(
             onPlayButtonClick = {
                 if(state.isPaused)
-                    component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Play)
+                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Play)
                 else
-                    component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Pause)
+                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Pause)
             },
-            onNextButtonClick = { component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Next) },
-            onBackButtonClick = { component.processIntent(com.example.mvi.app.songPlayer.SongPlayerIntent.Back) },
+            onNextButtonClick = { component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Next) },
+            onBackButtonClick = { component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Back) },
             isPaused = state.isPaused
         )
     }

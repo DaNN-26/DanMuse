@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.media.controller.data.SongControllerImpl
 import com.example.media.controller.domain.SongController
+import com.example.media.vkStore.VkStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,4 +27,8 @@ object MediaModule {
         player: ExoPlayer
     ): SongController =
         SongControllerImpl(player, context)
+
+    @Singleton
+    @Provides
+    fun provideVkStore(): VkStore = VkStore()
 }

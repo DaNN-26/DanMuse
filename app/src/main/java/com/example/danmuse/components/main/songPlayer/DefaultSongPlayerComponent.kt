@@ -2,7 +2,7 @@ package com.example.danmuse.components.main.songPlayer
 
 import com.arkivanov.decompose.ComponentContext
 import com.example.media.controller.domain.SongController
-import com.example.mvi.app.songPlayer.SongPlayerIntent
+import com.example.mvi.main.songPlayer.SongPlayerIntent
 import javax.inject.Inject
 
 class DefaultSongPlayerComponent @Inject constructor(

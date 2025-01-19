@@ -1,5 +1,6 @@
 package com.example.danmuse.components.main
 
+import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DelicateDecomposeApi
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -7,22 +8,38 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.example.danmuse.components.main.MainComponent.Child
 import com.example.danmuse.components.main.home.DefaultHomeComponent
 import com.example.danmuse.components.main.songPlayer.DefaultSongPlayerComponent
+import com.example.danmuse.components.main.vkMusic.DefaultVkMusicComponent
 import com.example.media.controller.domain.SongController
+import com.example.media.vkStore.VkStore
+import com.example.network.domain.repository.VkMusicRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class DefaultMainComponent @Inject constructor(
     private val componentContext: ComponentContext,
-    private val controller: SongController
+    private val controller: SongController,
+    private val vkMusicRepository: VkMusicRepository,
+    private val vkStore: VkStore
 ) : MainComponent, ComponentContext by componentContext {
 
     override val songState = controller.songState
 
     private val navigation = StackNavigation<Config>()
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    init {
+        initializeVkSongs()
+    }
 
     override val stack: Value<ChildStack<*, Child>> =
         childStack(
@@ -40,7 +57,7 @@ class DefaultMainComponent @Inject constructor(
         when (config) {
             is Config.Home -> Child.Home(homeComponent(componentContext))
             is Config.Profile -> Child.Profile()
-            is Config.Online -> Child.Online()
+            is Config.VkMusic -> Child.VkMusic(vkMusicComponent(componentContext))
             is Config.SongPlayer -> Child.SongPlayer(songPlayerComponent(componentContext))
         }
 
@@ -50,13 +67,40 @@ class DefaultMainComponent @Inject constructor(
     private fun songPlayerComponent(componentContext: ComponentContext) =
         DefaultSongPlayerComponent(componentContext, controller)
 
+    private fun vkMusicComponent(componentContext: ComponentContext) =
+        DefaultVkMusicComponent(
+            componentContext = componentContext,
+            controller = controller,
+            vkStore = vkStore
+        )
+
+    override fun navigateToHome() {
+        navigation.replaceAll(Config.Home)
+    }
+
+    override fun navigateToVkMusic() {
+        navigation.replaceAll(Config.VkMusic)
+    }
+
+    override fun navigateBack() {
+        navigation.pop()
+    }
+
     @OptIn(DelicateDecomposeApi::class)
     override fun openPlayer() {
         navigation.push(Config.SongPlayer)
     }
 
-    override fun navigateBack() {
-        navigation.pop()
+    private fun initializeVkSongs() {
+        scope.launch {
+            try {
+                val response = vkMusicRepository.getVkMusic(6000).response
+                Log.d("VkMusicComponent", "response: ${response.items}")
+                vkStore.updateState(songs = response.items ?: emptyList())
+            } catch (e: Exception) {
+                Log.d("VkMusicComponent error", e.message.toString())
+            }
+        }
     }
 
     @Serializable
@@ -66,7 +110,7 @@ class DefaultMainComponent @Inject constructor(
         @Serializable
         data object Profile : Config
         @Serializable
-        data object Online : Config
+        data object VkMusic : Config
         @Serializable
         data object SongPlayer : Config
     }

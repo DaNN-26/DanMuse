@@ -1,5 +1,6 @@
 package com.example.danmuse
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,6 +13,9 @@ import com.example.danmuse.components.songbar.DefaultSongBarComponent
 import com.example.danmuse.service.SongService
 import com.example.danmuse.ui.root.Root
 import com.example.danmuse.ui.theme.DanMuseTheme
+import com.example.media.controller.domain.SongController
+import com.example.media.vkStore.VkStore
+import com.example.network.domain.repository.VkMusicRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,8 +25,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var player: ExoPlayer
     @Inject
-    lateinit var controller: com.example.media.controller.domain.SongController
+    lateinit var controller: SongController
+    @Inject
+    lateinit var vkMusicRepository: VkMusicRepository
+    @Inject
+    lateinit var vkStore: VkStore
 
+    @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,8 +40,11 @@ class MainActivity : ComponentActivity() {
 
         val rootComponent = DefaultRootComponent(
             componentContext = componentContext,
-            controller = controller
+            controller = controller,
+            vkMusicRepository = vkMusicRepository,
+            vkStore = vkStore
         )
+
         val songBarComponent = DefaultSongBarComponent(
             componentContext = componentContext,
             controller = controller

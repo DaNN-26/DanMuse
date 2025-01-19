@@ -1,4 +1,4 @@
-package com.example.mvi.app.home
+package com.example.mvi.main.home
 
 import android.content.Context
 import com.example.media.model.Song
