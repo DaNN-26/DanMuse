@@ -35,7 +35,6 @@ fun MusicItem(
     currentSong: Song?,
     onMusicItemClick: (Song) -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,12 +79,10 @@ fun MusicItem(
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text =
-            if(currentSong == song)
+            text = if(currentSong == song)
                 formattedCurrentPosition
             else
-                song.duration
-            ,
+                song.duration,
             fontSize = 14.sp,
             modifier = Modifier.align(Alignment.CenterVertically)
         )

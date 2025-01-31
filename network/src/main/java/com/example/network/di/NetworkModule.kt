@@ -1,7 +1,7 @@
 package com.example.network.di
 
-import com.example.network.data.repository.VkMusicRepositoryImpl
-import com.example.network.domain.repository.VkMusicRepository
+import com.example.network.data.repository.VkNetworkRepositoryImpl
+import com.example.network.domain.repository.VkNetworkRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +30,6 @@ object NetworkModule {
         }
     @Singleton
     @Provides
-    fun provideRepository(client: HttpClient): VkMusicRepository =
-        VkMusicRepositoryImpl(client)
+    fun provideRepository(client: HttpClient): VkNetworkRepository =
+        VkNetworkRepositoryImpl(client)
 }

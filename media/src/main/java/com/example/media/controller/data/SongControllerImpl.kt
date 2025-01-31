@@ -1,6 +1,5 @@
 package com.example.media.controller.data
 
-import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
@@ -13,8 +12,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class SongControllerImpl @Inject constructor(
-    private val mediaPlayer: ExoPlayer,
-    private val context: Context
+    private val mediaPlayer: ExoPlayer
 ): SongController {
 
     private val _songState = MutableStateFlow(SongState())
@@ -97,13 +95,14 @@ class SongControllerImpl @Inject constructor(
     override fun close() {
         _songState.update { it.copy(
             song = null,
+            songList = emptyList(),
             isPaused = false,
             currentPosition = 0,
             formattedCurrentPosition = "00:00",
             duration = 0,
             trackIndex = 0
         ) }
-        _songState.update { it.copy(song = null) }
+        //_songState.update { it.copy(song = null) }
 
         mediaPlayer.stop()
     }

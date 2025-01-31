@@ -62,11 +62,13 @@ val serializationVersion: String by project
 val hiltVersion: String by project
 val media3Version: String by project
 val coilVersion: String by project
+val okhttp3Version: String by project
 
 dependencies {
     implementation(project(":mvi"))
     implementation(project(":media"))
     implementation(project(":network"))
+    implementation(project(":keystore"))
     implementation(project(":util"))
 
     implementation(libs.androidx.core.ktx)
@@ -94,9 +96,9 @@ dependencies {
 
     //mediaPlayer
     implementation("androidx.media3:media3-exoplayer:$media3Version")
-    implementation("androidx.media3:media3-ui:$media3Version") // ui
+    implementation("androidx.media3:media3-ui:$media3Version")
     implementation("androidx.media3:media3-session:$media3Version")
-    implementation("androidx.media:media:1.6.0")
+    implementation("androidx.media:media:1.7.0")
 
     //hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
@@ -106,11 +108,11 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:$coilVersion")
     implementation("io.coil-kt.coil3:coil-network-okhttp:$coilVersion")
     //okhttp3
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:$okhttp3Version")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp3Version")
 
     //icons
-    implementation("androidx.compose.material:material-icons-extended:1.7.5")
+    implementation("androidx.compose.material:material-icons-extended:1.7.6")
 
     //accompanist
     implementation("com.google.accompanist:accompanist-permissions:0.37.0")

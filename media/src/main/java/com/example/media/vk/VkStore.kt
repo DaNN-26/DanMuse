@@ -1,15 +1,15 @@
-package com.example.media.vkStore
+package com.example.media.vk
 
 import android.net.Uri
 import com.example.media.model.Song
-import com.example.media.vkStore.model.VkStoreState
-import com.example.network.domain.model.VkSong
+import com.example.media.vk.model.VkStoreState
+import com.example.network.domain.model.songs.VkSong
 import com.example.util.formatDuration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class VkStore {
+object VkStore {
     private val _state = MutableStateFlow(VkStoreState())
     val state = _state.asStateFlow()
 

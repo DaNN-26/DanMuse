@@ -4,7 +4,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.update
 import com.example.media.controller.domain.SongController
-import com.example.media.vkStore.VkStore
+import com.example.media.model.Song
+import com.example.media.vk.VkStore
 import com.example.mvi.main.vkMusic.VkMusicIntent
 import com.example.mvi.main.vkMusic.VkMusicState
 import javax.inject.Inject
@@ -23,19 +24,29 @@ class DefaultVkMusicComponent @Inject constructor(
 
     override val vkStoreState = vkStore.state
 
-
     override val songState = controller.songState
 
     override fun processIntent(intent: VkMusicIntent) {
         when (intent) {
-            is VkMusicIntent.InitializeSongs -> _state.update { it.copy(songsList = vkStore.state.value.songsList) }
+            is VkMusicIntent.InitializeSongs ->
+                _state.update { it.copy(
+                    songsList = vkStore.state.value.songsList,
+                    isLoading = false
+                ) }
             is VkMusicIntent.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = intent.searchQuery) }
                 getTracksBySearchQuery()
             }
             is VkMusicIntent.ClearSearchQuery -> _state.update { it.copy(searchQuery = "") }
-            is VkMusicIntent.OnSongSelected -> controller.selectMusic(intent.song, state.value.songsList)
+            is VkMusicIntent.OnSongSelected -> selectMusic(intent.song)
         }
+    }
+
+    private fun selectMusic(song: Song) {
+        if(state.value.searchQuery.isEmpty())
+            controller.selectMusic(song, state.value.songsList)
+        else
+            controller.selectMusic(song, state.value.filteredSongsList)
     }
 
     private fun getTracksBySearchQuery() {

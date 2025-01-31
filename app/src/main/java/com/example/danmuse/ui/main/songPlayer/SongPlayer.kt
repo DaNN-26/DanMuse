@@ -2,6 +2,7 @@ package com.example.danmuse.ui.main.songPlayer
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +42,7 @@ import androidx.media3.common.Player
 import coil3.compose.AsyncImage
 import com.example.danmuse.R
 import com.example.danmuse.components.main.songPlayer.SongPlayerComponent
+import com.example.mvi.main.songPlayer.SongPlayerIntent
 import kotlinx.coroutines.delay
 
 @Composable
@@ -54,7 +57,7 @@ fun SongPlayer(
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if(playbackState == Player.STATE_READY || playbackState == Player.STATE_BUFFERING)
-                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.SetDuration)
+                    component.processIntent(SongPlayerIntent.SetDuration)
             }
         }
         state.player?.addListener(listener)
@@ -66,13 +69,13 @@ fun SongPlayer(
 
     LaunchedEffect(state.player) {
         while (true) {
-            component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.UpdateProgress)
+            component.processIntent(SongPlayerIntent.UpdateProgress)
             delay(1000L)
             if (state.currentPosition > state.duration)
                 if (state.trackIndex != state.songList.lastIndex)
-                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Next)
+                    component.processIntent(SongPlayerIntent.Next)
                 else
-                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Pause)
+                    component.processIntent(SongPlayerIntent.Pause)
         }
     }
 
@@ -101,7 +104,7 @@ fun SongPlayer(
             currentPosition = state.currentPosition.toFloat(),
             songName = state.song?.name ?: "Нет названия",
             songArtist = state.song?.artist ?: "Нет исполнителя",
-            onValueChangeFinished = { component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Seek(it.toLong())) },
+            onValueChangeFinished = { component.processIntent(SongPlayerIntent.Seek(it.toLong())) },
             duration = state.duration.toFloat(),
             formattedDuration = state.song?.duration ?: "00:00"
         )
@@ -109,12 +112,12 @@ fun SongPlayer(
         SongPlayerButtonsRow(
             onPlayButtonClick = {
                 if(state.isPaused)
-                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Play)
+                    component.processIntent(SongPlayerIntent.Play)
                 else
-                    component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Pause)
+                    component.processIntent(SongPlayerIntent.Pause)
             },
-            onNextButtonClick = { component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Next) },
-            onBackButtonClick = { component.processIntent(com.example.mvi.main.songPlayer.SongPlayerIntent.Back) },
+            onNextButtonClick = { component.processIntent(SongPlayerIntent.Next) },
+            onBackButtonClick = { component.processIntent(SongPlayerIntent.Back) },
             isPaused = state.isPaused
         )
     }
@@ -141,13 +144,16 @@ fun SongPlayerSlider(
     ) {
         Text(
             text = songName,
-            maxLines = 2,
-            fontSize = 20.sp
+            maxLines = 1,
+            fontSize = 20.sp,
+            modifier = Modifier.horizontalScroll(rememberScrollState())
         )
         Text(
             text = songArtist,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.tertiary,
+            maxLines = 1,
+            modifier = Modifier.horizontalScroll(rememberScrollState())
         )
         Slider(
             value = sliderPosition,

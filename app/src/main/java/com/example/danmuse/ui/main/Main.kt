@@ -86,6 +86,7 @@ fun Main(
                     isBottomNavBarVisible = stackState.active.instance !is Child.SongPlayer,
                     navigateToHome = component::navigateToHome,
                     navigateToVkMusic = component::navigateToVkMusic,
+                    navigateToProfile = component::navigateToProfile
                 )
             }
         },
@@ -100,7 +101,10 @@ fun Main(
                     instance.component,
                     modifier = Modifier.padding(paddingValues)
                 )
-                is Child.Profile -> Profile()
+                is Child.Profile -> Profile(
+                    instance.component,
+                    modifier = Modifier.padding(paddingValues)
+                )
                 is Child.VkMusic -> VkMusic(
                     instance.component,
                     modifier = Modifier.padding(paddingValues)

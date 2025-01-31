@@ -36,8 +36,15 @@ class DefaultHomeComponent @Inject constructor(
                 getTracksBySearchQuery()
             }
             is HomeIntent.ClearSearchQuery -> _state.update { it.copy(searchQuery = "") }
-            is HomeIntent.OnSongSelected -> controller.selectMusic(intent.song, state.value.songsList)
+            is HomeIntent.OnSongSelected -> selectMusic(intent.song)
         }
+    }
+
+    private fun selectMusic(song: Song) {
+        if(state.value.searchQuery.isEmpty())
+            controller.selectMusic(song, state.value.songsList)
+        else
+            controller.selectMusic(song, state.value.filteredSongsList)
     }
 
     private fun getTracksBySearchQuery() {
@@ -50,7 +57,7 @@ class DefaultHomeComponent @Inject constructor(
                 .split(" ")
 
             state.copy(
-                songsList = state.filteredSongsList.filter { track ->
+                filteredSongsList = state.songsList.filter { track ->
                     val normalizedTrackName = track.name
                         .replace(",", "")
                         .replace("  ", " ")

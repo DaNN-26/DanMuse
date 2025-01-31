@@ -1,9 +1,11 @@
 package com.example.danmuse.ui.main.vkMusic
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Surface
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,26 +30,32 @@ fun VkMusic(
         component.processIntent(VkMusicIntent.InitializeSongs)
     }
 
-    Surface(
-        modifier = modifier
-    ) {
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            items(
-                if (state.searchQuery.isEmpty())
-                    state.songsList
-                else
-                    state.filteredSongsList
-            ) { song ->
-                MusicItem(
-                    song = song,
-                    formattedCurrentPosition = songState.formattedCurrentPosition,
-                    currentSong = songState.song,
-                    onMusicItemClick = { component.processIntent(VkMusicIntent.OnSongSelected(it)) }
-                )
+        if(state.isLoading)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = modifier
+            ) {
+                CircularProgressIndicator()
             }
-        }
+        else
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
+                modifier = modifier.fillMaxSize()
+            ) {
+                items(
+                    if (state.searchQuery.isEmpty())
+                        state.songsList
+                    else
+                        state.filteredSongsList
+                ) { song ->
+                    MusicItem(
+                        song = song,
+                        formattedCurrentPosition = songState.formattedCurrentPosition,
+                        currentSong = songState.song,
+                        onMusicItemClick = { component.processIntent(VkMusicIntent.OnSongSelected(it)) }
+                    )
+                }
+            }
     }
-}

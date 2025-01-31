@@ -1,4 +1,4 @@
-package com.example.media.vkStore.model
+package com.example.media.vk.model
 
 import com.example.media.model.Song
 

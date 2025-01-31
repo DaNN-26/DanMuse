@@ -35,7 +35,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun Home(
     component: HomeComponent,
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
     val state by component.state.subscribeAsState()
     val context = LocalContext.current

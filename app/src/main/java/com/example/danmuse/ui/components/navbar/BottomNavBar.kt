@@ -29,7 +29,8 @@ import com.example.danmuse.model.BottomNavigationItem
 fun BottomNavBar(
     isBottomNavBarVisible: Boolean,
     navigateToHome: () -> Unit,
-    navigateToVkMusic: () -> Unit
+    navigateToVkMusic: () -> Unit,
+    navigateToProfile: () -> Unit
 ) {
     var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 
@@ -61,11 +62,14 @@ fun BottomNavBar(
                                 navigateToVkMusic()
                                 selectedIndex = index
                             }
-                            2 -> selectedIndex = index
+                            2 -> {
+                                navigateToProfile()
+                                selectedIndex = index
+                            }
                         }
                     },
                     icon = {
-                        Icon(imageVector = item.icon, contentDescription = item.title)
+                        Icon(imageVector = item.icon, contentDescription = null)
                     },
                     colors = NavigationBarItemDefaults.colors(
                         indicatorColor = if (!isSystemInDarkTheme())
@@ -81,15 +85,12 @@ fun BottomNavBar(
 
 val items = listOf(
     BottomNavigationItem(
-        title = "Дом",
         icon = Icons.Rounded.Home
     ),
     BottomNavigationItem(
-        title = "ВК Музыка",
         icon = Icons.Rounded.List
     ),
     BottomNavigationItem(
-        title = "Профиль",
         icon = Icons.Rounded.AccountCircle
     )
 )

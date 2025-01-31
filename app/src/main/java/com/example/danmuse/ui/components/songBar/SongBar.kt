@@ -43,7 +43,7 @@ fun SongBar(
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if(playbackState == Player.STATE_READY || playbackState == Player.STATE_BUFFERING)
-                    component.processIntent(com.example.mvi.songBar.SongBarIntent.SetDuration)
+                    component.processIntent(SongBarIntent.SetDuration)
             }
         }
         songState.player?.addListener(listener)
@@ -55,13 +55,13 @@ fun SongBar(
 
     LaunchedEffect(songState.player) {
         while (true) {
-            component.processIntent(com.example.mvi.songBar.SongBarIntent.UpdateProgress)
+            component.processIntent(SongBarIntent.UpdateProgress)
             delay(1000L)
             if (songState.currentPosition > songState.duration)
                 if (songState.trackIndex != songState.songList.lastIndex)
-                    component.processIntent(com.example.mvi.songBar.SongBarIntent.Next)
+                    component.processIntent(SongBarIntent.Next)
                 else
-                    component.processIntent(com.example.mvi.songBar.SongBarIntent.Pause)
+                    component.processIntent(SongBarIntent.Pause)
         }
     }
 
@@ -84,14 +84,18 @@ fun SongBar(
                 ) {
                     Text(
                         text = songState.song?.name ?: "",
-                        overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.width(170.dp)
+                        modifier = Modifier.width(200.dp)
                     )
                     Text(
                         text = songState.song?.artist ?: "",
-                        color = MaterialTheme.colorScheme.tertiary
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.width(230.dp)
                     )
                 }
                 SongBarIconButton(

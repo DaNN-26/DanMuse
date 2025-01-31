@@ -10,13 +10,14 @@ import com.arkivanov.decompose.value.Value
 import com.example.danmuse.components.auth.AuthComponent.Child
 import com.example.danmuse.components.auth.signIn.DefaultSignInComponent
 import com.example.danmuse.components.auth.vkHost.DefaultVkHostComponent
-import com.example.network.core.VkMusicArgs
+import com.example.keystore.KeystoreManager
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 class DefaultAuthComponent @Inject constructor(
     componentContext: ComponentContext,
-    private val navigateToMain: () -> Unit
+    private val navigateToMain: () -> Unit,
+    private val keystoreManager: KeystoreManager
 ) : AuthComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -47,7 +48,7 @@ class DefaultAuthComponent @Inject constructor(
         DefaultVkHostComponent(
             componentContext = componentContext,
             onTokenReceived = { token ->
-                VkMusicArgs.token = token
+                keystoreManager.saveToken(token)
                 navigateToMain()
             }
         )

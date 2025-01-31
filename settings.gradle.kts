@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google {
@@ -7,7 +9,6 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
-        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
         mavenCentral()
         gradlePluginPortal()
     }
@@ -17,8 +18,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven(url = "https://jitpack.io")
-        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
     }
 }
 
@@ -28,3 +27,4 @@ include(":media")
 include(":mvi")
 include(":util")
 include(":network")
+include(":keystore")

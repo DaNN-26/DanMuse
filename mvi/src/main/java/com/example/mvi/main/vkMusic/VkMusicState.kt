@@ -7,5 +7,6 @@ import kotlinx.serialization.Serializable
 data class VkMusicState(
     val songsList: List<Song> = emptyList(),
     val filteredSongsList: List<Song> = emptyList(),
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val isLoading: Boolean = true
 )

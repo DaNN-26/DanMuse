@@ -1,7 +1,5 @@
 package com.example.danmuse
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,12 +8,12 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.arkivanov.decompose.defaultComponentContext
 import com.example.danmuse.components.root.DefaultRootComponent
 import com.example.danmuse.components.songbar.DefaultSongBarComponent
-import com.example.danmuse.service.SongService
 import com.example.danmuse.ui.root.Root
 import com.example.danmuse.ui.theme.DanMuseTheme
+import com.example.keystore.KeystoreManager
 import com.example.media.controller.domain.SongController
-import com.example.media.vkStore.VkStore
-import com.example.network.domain.repository.VkMusicRepository
+import com.example.media.vk.VkStore
+import com.example.network.domain.repository.VkNetworkRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -27,11 +25,12 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var controller: SongController
     @Inject
-    lateinit var vkMusicRepository: VkMusicRepository
+    lateinit var vkNetworkRepository: VkNetworkRepository
     @Inject
     lateinit var vkStore: VkStore
+    @Inject
+    lateinit var keystoreManager: KeystoreManager
 
-    @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,8 +40,9 @@ class MainActivity : ComponentActivity() {
         val rootComponent = DefaultRootComponent(
             componentContext = componentContext,
             controller = controller,
-            vkMusicRepository = vkMusicRepository,
-            vkStore = vkStore
+            vkNetworkRepository = vkNetworkRepository,
+            vkStore = vkStore,
+            keystoreManager = keystoreManager
         )
 
         val songBarComponent = DefaultSongBarComponent(
@@ -62,9 +62,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
-        val intent = Intent(this, SongService::class.java)
-        stopService(intent)
 
         player.stop()
         player.release()
